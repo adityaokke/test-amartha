@@ -9,6 +9,7 @@ func Router(
 	loanHandler LoanHandler,
 ) {
 	e.POST("/loans", loanHandler.ProposeLoan)
-	e.GET("/users/:id/loans", loanHandler.GetLoans)
+	e.GET("loans", loanHandler.GetLoans)
 	e.GET("/loans/:id", loanHandler.GetLoan)
+	e.PATCH("/loans/:id", loanHandler.PatchLoan)
 }

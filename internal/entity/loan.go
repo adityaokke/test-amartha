@@ -53,6 +53,7 @@ func (l *Loan) BeforeCreate(tx *gorm.DB) (err error) {
 
 type LoansInput struct {
 	UserID *int
+	Status *LoanStatus
 }
 
 type LoanInput struct {
@@ -62,6 +63,7 @@ type LoanInput struct {
 type WhereLoan struct {
 	ID     *int
 	UserID *int
+	Status *LoanStatus
 }
 
 func (w *WhereLoan) Scan(input any) {
@@ -70,12 +72,25 @@ func (w *WhereLoan) Scan(input any) {
 		w.ID = v.ID
 	case LoansInput:
 		w.UserID = v.UserID
+		w.Status = v.Status
 	}
 }
 
 type ProposeLoanInput struct {
 	UserID int
 	Amount int
+}
+
+type PatchLoanInput struct {
+	ID int
+	// approval info
+	EmployeeID    int
+	PhotoProofURL string
+	Status        LoanStatus
+	// disbursement info
+	LoanAgreementLetterURL         string
+	DisbursedByEmployeeID          int
+	AgreementCollectedByEmployeeID int
 }
 
 type ApproveLoanInput struct {
@@ -85,11 +100,10 @@ type ApproveLoanInput struct {
 }
 
 type DisburseLoanInput struct {
-	LoanID                         int
-	LoanAgreementLetterURL         string
+	ID                             int
 	DisbursedByEmployeeID          int
+	LoanAgreementLetterURL         string
 	AgreementCollectedByEmployeeID int
-	DisbursedAt                    time.Time
 }
 
 type InvestLoanInput struct {

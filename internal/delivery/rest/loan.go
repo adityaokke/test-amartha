@@ -42,21 +42,30 @@ func (d LoanHandler) ProposeLoan(c echo.Context) error {
 }
 
 func (d LoanHandler) GetLoans(c echo.Context) error {
-	UserID := c.Param("id")
+	input := entity.LoansInput{}
 
-	var userID *int
-	if UserID != "" {
-		parsedUserID, err := strconv.Atoi(UserID)
+	userID := c.QueryParam("userId")
+	if userID != "" {
+		userIDParsed, err := strconv.Atoi(userID)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
 				"error": "Invalid userId",
 			})
 		}
-		userID = &parsedUserID
+		input.UserID = &userIDParsed
 	}
-	result, err := d.loanService.Loans(c.Request().Context(), entity.LoansInput{
-		UserID: userID,
-	})
+
+	status := entity.LoanStatus(c.QueryParam("status"))
+	if status != "" {
+		if !status.IsValid() {
+			return c.JSON(http.StatusBadRequest, echo.Map{
+				"error": "Invalid status",
+			})
+		}
+		input.Status = &status
+	}
+
+	result, err := d.loanService.Loans(c.Request().Context(), input)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
 	}
@@ -78,6 +87,52 @@ func (d LoanHandler) GetLoan(c echo.Context) error {
 	result, err := d.loanService.Loan(c.Request().Context(), entity.LoanInput{
 		ID: &parsedID,
 	})
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
+	}
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"data": map[string]interface{}{
+			"loan": result,
+		},
+	})
+}
+
+func (d LoanHandler) PatchLoan(c echo.Context) error {
+	id := c.Param("id")
+	parsedID, err := strconv.Atoi(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"error": "Invalid id",
+		})
+	}
+
+	var form entity.PatchLoanInput
+	if err := c.Bind(&form); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"error": "Invalid JSON",
+		})
+	}
+	form.ID = parsedID
+	var result entity.Loan
+	switch form.Status {
+	case entity.LoanStatusApproved:
+		result, err = d.loanService.ApproveLoan(c.Request().Context(), entity.ApproveLoanInput{
+			ID:            form.ID,
+			EmployeeID:    form.EmployeeID,
+			PhotoProofURL: form.PhotoProofURL,
+		})
+	case entity.LoanStatusDisbursed:
+		result, err = d.loanService.DisburseLoan(c.Request().Context(), entity.DisburseLoanInput{
+			ID:                             form.ID,
+			LoanAgreementLetterURL:         form.LoanAgreementLetterURL,
+			DisbursedByEmployeeID:          form.DisbursedByEmployeeID,
+			AgreementCollectedByEmployeeID: form.AgreementCollectedByEmployeeID,
+		})
+	default:
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"error": "Invalid status",
+		})
+	}
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
 	}

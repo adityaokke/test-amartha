@@ -9,17 +9,19 @@ import (
 	"github.com/adityaokke/test-amartha/internal/repository/db/sqlite/migration"
 	"github.com/adityaokke/test-amartha/internal/service"
 	driver "github.com/glebarez/sqlite"
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"gorm.io/gorm"
 )
 
 func main() {
+	godotenv.Load(".env")
+
 	db, err := gorm.Open(driver.Open("amartha.db"), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}
-
 	migration.Migrate(db)
 
 	// initialize echo
@@ -34,8 +36,8 @@ func main() {
 		AllowCredentials: true,
 	}))
 
-	nodeEnv := os.Getenv("NODE_ENV")
-	if nodeEnv == "development" {
+	goEnv := os.Getenv("GO_ENV")
+	if goEnv == "development" {
 		db = db.Debug()
 	}
 	loanRepo := sqlite.NewLoanRepository().

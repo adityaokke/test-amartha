@@ -45,6 +45,12 @@ func getWhereLoan(db *gorm.DB, filter *entity.WhereLoan) *gorm.DB {
 	if filter.ID != nil {
 		db = db.Where(tableName+".id = ?", *filter.ID)
 	}
+	if filter.UserID != nil {
+		db = db.Where(tableName+".user_id = ?", *filter.UserID)
+	}
+	if filter.Status != nil {
+		db = db.Where(tableName+".status = ?", *filter.Status)
+	}
 	return db
 }
 

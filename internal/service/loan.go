@@ -13,6 +13,7 @@ import (
 type LoanService interface {
 	ProposeLoan(ctx context.Context, item entity.ProposeLoanInput) (result entity.Loan, err error)
 	ApproveLoan(ctx context.Context, input entity.ApproveLoanInput) (result entity.Loan, err error)
+	DisburseLoan(ctx context.Context, input entity.DisburseLoanInput) (result entity.Loan, err error)
 
 	Loans(ctx context.Context, filter entity.LoansInput) (result []entity.Loan, err error)
 	CountLoans(ctx context.Context, filter entity.LoansInput) (result int64, err error)
@@ -56,12 +57,60 @@ func (s *loanService) ApproveLoan(ctx context.Context, input entity.ApproveLoanI
 		return
 	}
 
+	if currentItem.Status != entity.LoanStatusProposed {
+		err = errors.New("only proposed loan can be approved")
+		return
+	}
+
 	currentItem.ApprovedByEmployeeID = &input.EmployeeID
 	currentItem.Status = entity.LoanStatusApproved
 	trimmedURL := strings.TrimSpace(input.PhotoProofURL)
 	currentItem.PhotoProofURL = &trimmedURL
 	approvedAt := time.Now().UTC()
 	currentItem.ApprovedAt = &approvedAt
+	err = s.loanRepo.Update(ctx, &currentItem)
+	if err != nil {
+		return
+	}
+	result = currentItem
+	return
+}
+
+func (s *loanService) DisburseLoan(ctx context.Context, input entity.DisburseLoanInput) (result entity.Loan, err error) {
+	if input.ID == 0 {
+		err = errors.New("id is required")
+		return
+	}
+	if input.DisbursedByEmployeeID == 0 {
+		err = errors.New("disbursedByEmployeeId is required")
+		return
+	}
+	if input.LoanAgreementLetterURL == "" {
+		err = errors.New("loanAgreementLetterUrl is required")
+		return
+	}
+	if input.AgreementCollectedByEmployeeID == 0 {
+		err = errors.New("agreementCollectedByEmployeeId is required")
+		return
+	}
+	currentItem, err := s.loanRepo.Loan(ctx, entity.LoanInput{
+		ID: &input.ID,
+	})
+	if err != nil {
+		return
+	}
+
+	if currentItem.Status != entity.LoanStatusApproved {
+		err = errors.New("only approved loan can be disbursed")
+		return
+	}
+	currentItem.DisbursedByEmployeeID = &input.DisbursedByEmployeeID
+	trimmedURL := strings.TrimSpace(input.LoanAgreementLetterURL)
+	currentItem.LoanAgreementLetterURL = &trimmedURL
+	currentItem.AgreementCollectedByEmployeeID = &input.AgreementCollectedByEmployeeID
+	disbursedAt := time.Now().UTC()
+	currentItem.DisbursedAt = &disbursedAt
+	currentItem.Status = entity.LoanStatusDisbursed
 	err = s.loanRepo.Update(ctx, &currentItem)
 	if err != nil {
 		return
