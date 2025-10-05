@@ -162,6 +162,25 @@ func (s *loanService) DisburseLoan(ctx context.Context, input entity.DisburseLoa
 		err = errors.New("only approved loan can be disbursed")
 		return
 	}
+	if currentItem.InvestedAmount < currentItem.Amount {
+		err = errors.New("only fully invested loan can be disbursed")
+		return
+	}
+	loanInvestments, err := s.loanInvestmentRepo.LoanInvestments(ctx, entity.LoanInvestmentsInput{
+		LoanID: &input.ID,
+	})
+	if err != nil {
+		return
+	}
+	totalInvestment := 0
+	for _, investment := range loanInvestments {
+		totalInvestment += investment.Amount
+	}
+	if totalInvestment != currentItem.Amount {
+		err = errors.New("total investment does not match loan amount, please contact admin/cs")
+		return
+	}
+
 	currentItem.DisbursedByEmployeeID = &input.DisbursedByEmployeeID
 	trimmedURL := strings.TrimSpace(input.LoanAgreementLetterURL)
 	currentItem.LoanAgreementLetterURL = &trimmedURL
@@ -173,6 +192,7 @@ func (s *loanService) DisburseLoan(ctx context.Context, input entity.DisburseLoa
 	if err != nil {
 		return
 	}
+	result = currentItem
 	return
 }
 
