@@ -142,3 +142,21 @@ func (d LoanHandler) PatchLoan(c echo.Context) error {
 		},
 	})
 }
+
+func (d LoanHandler) InvestLoan(c echo.Context) error {
+	var form entity.InvestLoanInput
+	if err := c.Bind(&form); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"error": "Invalid JSON",
+		})
+	}
+	result, err := d.loanService.InvestLoan(c.Request().Context(), form)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
+	}
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"data": map[string]interface{}{
+			"loan_investment": result,
+		},
+	})
+}

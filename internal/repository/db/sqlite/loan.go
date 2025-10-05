@@ -41,7 +41,7 @@ func (r loanRepository) Delete(ctx context.Context, item *entity.Loan) (err erro
 }
 
 func getWhereLoan(db *gorm.DB, filter *entity.WhereLoan) *gorm.DB {
-	tableName := "loan"
+	tableName := entity.Loan{}.TableName()
 	if filter.ID != nil {
 		db = db.Where(tableName+".id = ?", *filter.ID)
 	}

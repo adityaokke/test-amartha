@@ -11,8 +11,9 @@ import (
 )
 
 type LoanService interface {
-	ProposeLoan(ctx context.Context, item entity.ProposeLoanInput) (result entity.Loan, err error)
+	ProposeLoan(ctx context.Context, input entity.ProposeLoanInput) (result entity.Loan, err error)
 	ApproveLoan(ctx context.Context, input entity.ApproveLoanInput) (result entity.Loan, err error)
+	InvestLoan(ctx context.Context, input entity.InvestLoanInput) (result entity.LoanInvestment, err error)
 	DisburseLoan(ctx context.Context, input entity.DisburseLoanInput) (result entity.Loan, err error)
 
 	Loans(ctx context.Context, filter entity.LoansInput) (result []entity.Loan, err error)
@@ -20,20 +21,21 @@ type LoanService interface {
 	Loan(ctx context.Context, filter entity.LoanInput) (result entity.Loan, err error)
 }
 
-func (s *loanService) ProposeLoan(ctx context.Context, item entity.ProposeLoanInput) (result entity.Loan, err error) {
-	if item.UserID == 0 {
+func (s *loanService) ProposeLoan(ctx context.Context, input entity.ProposeLoanInput) (result entity.Loan, err error) {
+	if input.UserID == 0 {
 		err = errors.New("user_id is required")
 		return
 	}
-	result = entity.Loan{
-		UserID: item.UserID,
-		Amount: item.Amount,
+	item := entity.Loan{
+		UserID: input.UserID,
+		Amount: input.Amount,
 		Status: entity.LoanStatusProposed,
 	}
-	err = s.loanRepo.Create(ctx, &result)
+	err = s.loanRepo.Create(ctx, &item)
 	if err != nil {
 		return
 	}
+	result = item
 	return
 }
 
@@ -73,6 +75,62 @@ func (s *loanService) ApproveLoan(ctx context.Context, input entity.ApproveLoanI
 		return
 	}
 	result = currentItem
+	return
+}
+
+func (s *loanService) InvestLoan(ctx context.Context, input entity.InvestLoanInput) (result entity.LoanInvestment, err error) {
+	if input.LoanID == 0 {
+		err = errors.New("loanId is required")
+		return
+	}
+	if input.InvestorID == 0 {
+		err = errors.New("investorId is required")
+		return
+	}
+	if input.Amount == 0 {
+		err = errors.New("amount is required")
+		return
+	}
+
+	loan, err := s.loanRepo.Loan(ctx, entity.LoanInput{
+		ID: &input.LoanID,
+	})
+	if err != nil {
+		return
+	}
+	if loan.Status != entity.LoanStatusApproved {
+		err = errors.New("only approved loan can be invested")
+		return
+	}
+	if loan.InvestedAmount >= loan.Amount {
+		err = errors.New("loan is already fully funded")
+		return
+	}
+	if loan.InvestedAmount+input.Amount > loan.Amount {
+		err = errors.New("investment would exceed loan amount")
+		return
+	}
+
+	item := entity.LoanInvestment{
+		LoanID:     input.LoanID,
+		InvestorID: input.InvestorID,
+		Amount:     input.Amount,
+	}
+	err = s.loanInvestmentRepo.InvestLoan(ctx, &item)
+	if err != nil {
+		return
+	}
+
+	loan, err = s.loanRepo.Loan(ctx, entity.LoanInput{
+		ID: &input.LoanID,
+	})
+	if err != nil {
+		return
+	}
+	if loan.InvestedAmount == loan.Amount {
+		// TODO: send email to investor
+	}
+	result = item
 	return
 }
 
@@ -143,7 +201,8 @@ func (s *loanService) Loan(ctx context.Context, filter entity.LoanInput) (result
 }
 
 type loanService struct {
-	loanRepo db.LoanRepository
+	loanRepo           db.LoanRepository
+	loanInvestmentRepo db.LoanInvestmentRepository
 }
 
 type InitiatorLoan func(s *loanService) *loanService
@@ -157,6 +216,13 @@ func NewLoanService() InitiatorLoan {
 func (i InitiatorLoan) SetRepository(loanRepository db.LoanRepository) InitiatorLoan {
 	return func(s *loanService) *loanService {
 		i(s).loanRepo = loanRepository
+		return s
+	}
+}
+
+func (i InitiatorLoan) SetLoanInvestmentRepository(loanInvestmentRepository db.LoanInvestmentRepository) InitiatorLoan {
+	return func(s *loanService) *loanService {
+		i(s).loanInvestmentRepo = loanInvestmentRepository
 		return s
 	}
 }

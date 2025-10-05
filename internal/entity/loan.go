@@ -24,10 +24,11 @@ func (ls LoanStatus) IsValid() bool {
 }
 
 type Loan struct {
-	ID     int        `json:"id" gorm:"primaryKey;autoIncrement"`
-	UserID int        `json:"userId" gorm:"index;"`
-	Amount int        `json:"amount" gorm:"type:INTEGER;"`
-	Status LoanStatus `json:"status" gorm:"type:VARCHAR(50);"`
+	ID             int        `json:"id" gorm:"primaryKey;autoIncrement"`
+	UserID         int        `json:"userId" gorm:"index;"`
+	Amount         int        `json:"amount" gorm:"type:INTEGER;"`
+	Status         LoanStatus `json:"status" gorm:"type:VARCHAR(50);"`
+	InvestedAmount int        `json:"investedAmount" gorm:"type:INTEGER;default:0;"`
 	// approval info
 	PhotoProofURL        *string    `json:"photoProofUrl" gorm:"type:TEXT;"`
 	ApprovedByEmployeeID *int       `json:"employeeId" gorm:"index;"`
@@ -104,9 +105,4 @@ type DisburseLoanInput struct {
 	DisbursedByEmployeeID          int
 	LoanAgreementLetterURL         string
 	AgreementCollectedByEmployeeID int
-}
-
-type InvestLoanInput struct {
-	ID     int
-	UserID int
 }

@@ -43,15 +43,24 @@ func main() {
 	loanRepo := sqlite.NewLoanRepository().
 		SetDBConnection(db).
 		Build()
+	loanInvestmentRepo := sqlite.NewLoanInvestmentRepository().
+		SetDBConnection(db).
+		Build()
 
 	loanService := service.NewLoanService().
 		SetRepository(loanRepo).
+		SetLoanInvestmentRepository(loanInvestmentRepo).
+		Build()
+	loanInvestmentService := service.NewLoanInvestmentService().
+		SetRepository(loanInvestmentRepo).
 		Build()
 
 	loanHandler := rest.NewLoanHandler(loanService)
+	loanInvestmentHandler := rest.NewLoanInvestmentHandler(loanInvestmentService)
 	rest.Router(
 		e,
 		loanHandler,
+		loanInvestmentHandler,
 	)
 
 	host := "localhost"
