@@ -111,6 +111,18 @@ func (s *loanService) InvestLoan(ctx context.Context, input entity.InvestLoanInp
 		return
 	}
 
+	loanInvestment, err := s.loanInvestmentRepo.LoanInvestment(ctx, entity.LoanInvestmentInput{
+		LoanID:     &input.LoanID,
+		InvestorID: &input.InvestorID,
+	})
+	if err != nil {
+		return
+	}
+	if loanInvestment.ID != 0 {
+		err = errors.New("investor has already invested in this loan")
+		return
+	}
+
 	item := entity.LoanInvestment{
 		LoanID:     input.LoanID,
 		InvestorID: input.InvestorID,

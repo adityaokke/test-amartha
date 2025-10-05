@@ -41,6 +41,9 @@ func getWhereLoanInvestment(db *gorm.DB, filter *entity.WhereLoanInvestment) *go
 	if filter.LoanID != nil {
 		db = db.Where(tableName+".loan_id = ?", *filter.LoanID)
 	}
+	if filter.InvestorID != nil {
+		db = db.Where(tableName+".investor_id = ?", *filter.InvestorID)
+	}
 	return db
 }
 

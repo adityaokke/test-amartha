@@ -17,18 +17,23 @@ type LoanInvestmentsInput struct {
 }
 
 type LoanInvestmentInput struct {
-	ID *int
+	ID         *int
+	LoanID     *int
+	InvestorID *int
 }
 
 type WhereLoanInvestment struct {
-	ID     *int
-	LoanID *int
+	ID         *int
+	LoanID     *int
+	InvestorID *int
 }
 
 func (w *WhereLoanInvestment) Scan(input any) {
 	switch v := input.(type) {
 	case LoanInvestmentInput:
 		w.ID = v.ID
+		w.LoanID = v.LoanID
+		w.InvestorID = v.InvestorID
 	case LoanInvestmentsInput:
 		w.LoanID = v.LoanID
 	}
