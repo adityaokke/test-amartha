@@ -3,11 +3,14 @@ package service
 import (
 	"context"
 	"errors"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/adityaokke/test-amartha/internal/entity"
 	"github.com/adityaokke/test-amartha/internal/repository/db"
+	"github.com/adityaokke/test-amartha/internal/repository/mail"
+	"gorm.io/gorm"
 )
 
 type LoanService interface {
@@ -92,6 +95,14 @@ func (s *loanService) InvestLoan(ctx context.Context, input entity.InvestLoanInp
 		return
 	}
 
+	// check if investor exists
+	_, err = s.investorRepo.Investor(ctx, entity.InvestorInput{
+		ID: &input.InvestorID,
+	})
+	if err != nil {
+		return
+	}
+
 	loan, err := s.loanRepo.Loan(ctx, entity.LoanInput{
 		ID: &input.LoanID,
 	})
@@ -115,7 +126,7 @@ func (s *loanService) InvestLoan(ctx context.Context, input entity.InvestLoanInp
 		LoanID:     &input.LoanID,
 		InvestorID: &input.InvestorID,
 	})
-	if err != nil {
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return
 	}
 	if loanInvestment.ID != 0 {
@@ -140,7 +151,39 @@ func (s *loanService) InvestLoan(ctx context.Context, input entity.InvestLoanInp
 		return
 	}
 	if loan.InvestedAmount == loan.Amount {
-		// TODO: send email to investor
+		var loanInvestments []entity.LoanInvestment
+		loanInvestments, err = s.loanInvestmentRepo.LoanInvestments(ctx, entity.LoanInvestmentsInput{
+			LoanID: &loan.ID,
+		})
+		if err != nil {
+			return
+		}
+		investorIDs := make([]int, 0)
+		investmentsMap := make(map[int]entity.LoanInvestment)
+		for _, investment := range loanInvestments {
+			investorIDs = append(investorIDs, investment.InvestorID)
+			investmentsMap[investment.InvestorID] = investment
+		}
+		var investors []entity.Investor
+		investors, err = s.investorRepo.Investors(ctx, entity.InvestorsInput{
+			IDs: &investorIDs,
+		})
+		if err != nil {
+			return
+		}
+		for _, investor := range investors {
+			investment := investmentsMap[investor.ID]
+			err = s.mailApi.SendInvestorAgreementMail(ctx, entity.SendInvestorAgreementMailInput{
+				To:           investor.Email,
+				InvestorName: investor.Email,
+				InvestDate:   investment.CreatedAt.Format("02 Jan 2006"),
+				Amount:       strconv.Itoa(investment.Amount),
+				AgreementURL: *loan.LoanAgreementLetterURL,
+			})
+			if err != nil {
+				return
+			}
+		}
 	}
 	result = item
 	return
@@ -235,6 +278,8 @@ func (s *loanService) Loan(ctx context.Context, filter entity.LoanInput) (result
 type loanService struct {
 	loanRepo           db.LoanRepository
 	loanInvestmentRepo db.LoanInvestmentRepository
+	investorRepo       db.InvestorRepository
+	mailApi            mail.MailApi
 }
 
 type InitiatorLoan func(s *loanService) *loanService
@@ -255,6 +300,20 @@ func (i InitiatorLoan) SetRepository(loanRepository db.LoanRepository) Initiator
 func (i InitiatorLoan) SetLoanInvestmentRepository(loanInvestmentRepository db.LoanInvestmentRepository) InitiatorLoan {
 	return func(s *loanService) *loanService {
 		i(s).loanInvestmentRepo = loanInvestmentRepository
+		return s
+	}
+}
+
+func (i InitiatorLoan) SetInvestorRepository(investorRepository db.InvestorRepository) InitiatorLoan {
+	return func(s *loanService) *loanService {
+		i(s).investorRepo = investorRepository
+		return s
+	}
+}
+
+func (i InitiatorLoan) SetMailApi(mailApi mail.MailApi) InitiatorLoan {
+	return func(s *loanService) *loanService {
+		i(s).mailApi = mailApi
 		return s
 	}
 }

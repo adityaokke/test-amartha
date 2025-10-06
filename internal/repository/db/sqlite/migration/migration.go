@@ -7,4 +7,5 @@ import (
 
 func Migrate(db *gorm.DB) {
 	db.AutoMigrate(&entity.Loan{}, &entity.LoanInvestment{})
+	db.AutoMigrate(&entity.Investor{})
 }

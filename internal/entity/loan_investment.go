@@ -5,6 +5,7 @@ type LoanInvestment struct {
 	LoanID     int `json:"loanId" gorm:"index;"`
 	InvestorID int `json:"investorID" gorm:"index;"`
 	Amount     int `json:"amount" gorm:"type:INTEGER;"`
+
 	BaseTimeStruct
 }
 
