@@ -14,7 +14,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"userId\": 1,\r\n    \"amount\": 1000000\r\n}",
+					"raw": "{\r\n    \"userId\": 1,\r\n    \"amount\": 1000000,\r\n    \"rate\": 11.5,\r\n    \"term\": 50,\r\n    \"termUnit\": \"WEEKLY\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -34,13 +34,13 @@
 			},
 			"response": [
 				{
-					"name": "Sucess",
+					"name": "Success",
 					"originalRequest": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"userId\": 1,\r\n    \"amount\": 1000000\r\n}",
+							"raw": "{\r\n    \"userId\": 1,\r\n    \"amount\": 1000000,\r\n    \"rate\": 11.5,\r\n    \"term\": 50,\r\n    \"termUnit\": \"WEEKLY\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -72,62 +72,47 @@
 						},
 						{
 							"key": "Date",
-							"value": "Sun, 05 Oct 2025 00:36:38 GMT"
+							"value": "Mon, 06 Oct 2025 02:29:00 GMT"
 						},
 						{
 							"key": "Content-Length",
-							"value": "186"
+							"value": "397"
 						}
 					],
 					"cookie": [],
-					"body": "{\n    \"data\": {\n        \"loan\": {\n            \"id\": 1,\n            \"userId\": 1,\n            \"employeeId\": null,\n            \"amount\": 1000000,\n            \"status\": \"PROPOSED\",\n            \"photoProofUrl\": null,\n            \"approvedAt\": null,\n            \"createdAt\": \"2025-10-05T04:05:19Z\",\n            \"updatedAt\": null\n        }\n    }\n}"
+					"body": "{\n    \"data\": {\n        \"loan\": {\n            \"id\": 1,\n            \"userId\": 1,\n            \"amount\": 1000000,\n            \"status\": \"PROPOSED\",\n            \"investedAmount\": 0,\n            \"rate\": 11.5,\n            \"term\": 50,\n            \"photoProofUrl\": null,\n            \"employeeId\": null,\n            \"approvedAt\": null,\n            \"fullyInvestedAt\": null,\n            \"rawLoanAgreementLetterUrl\": null,\n            \"loanAgreementLetterUrl\": null,\n            \"agreementCollectedByEmployeeId\": null,\n            \"disbursedByEmployeeId\": null,\n            \"disbursedAt\": null,\n            \"createdAt\": \"2025-10-06T02:29:00Z\",\n            \"updatedAt\": null\n        }\n    }\n}"
 				}
 			]
 		},
 		{
 			"name": "Get Loans",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"userId\": 1,\r\n    \"amount\": 1000000\r\n}"
-				},
 				"url": {
-					"raw": "localhost:3000/users/1/loans",
+					"raw": "localhost:3000/loans",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
-						"users",
-						"1",
 						"loans"
 					]
 				}
 			},
 			"response": [
 				{
-					"name": "Success",
+					"name": "Sucess",
 					"originalRequest": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"userId\": 1,\r\n    \"amount\": 1000000\r\n}"
-						},
 						"url": {
-							"raw": "localhost:3000/users/1/loans",
+							"raw": "localhost:3000/loans",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
-								"users",
-								"1",
 								"loans"
 							]
 						}
@@ -146,30 +131,115 @@
 						},
 						{
 							"key": "Date",
-							"value": "Sun, 05 Oct 2025 00:35:51 GMT"
+							"value": "Mon, 06 Oct 2025 02:29:53 GMT"
 						},
 						{
 							"key": "Content-Length",
-							"value": "357"
+							"value": "779"
 						}
 					],
 					"cookie": [],
-					"body": "{\n    \"data\": {\n        \"loans\": [\n            {\n                \"id\": 1,\n                \"userId\": 1,\n                \"employeeId\": null,\n                \"amount\": 1000000,\n                \"status\": \"PROPOSED\",\n                \"photoProofUrl\": null,\n                \"approvedAt\": null,\n                \"createdAt\": \"2025-10-05T04:05:19Z\",\n                \"updatedAt\": null\n            },\n            {\n                \"id\": 2,\n                \"userId\": 1,\n                \"employeeId\": null,\n                \"amount\": 2000000,\n                \"status\": \"PROPOSED\",\n                \"photoProofUrl\": null,\n                \"approvedAt\": null,\n                \"createdAt\": \"2025-10-05T04:05:38Z\",\n                \"updatedAt\": null\n            }\n        ]\n    }\n}"
+					"body": "{\n    \"data\": {\n        \"loans\": [\n            {\n                \"id\": 1,\n                \"userId\": 1,\n                \"amount\": 1000000,\n                \"status\": \"PROPOSED\",\n                \"investedAmount\": 0,\n                \"rate\": 11.5,\n                \"term\": 50,\n                \"photoProofUrl\": null,\n                \"employeeId\": null,\n                \"approvedAt\": null,\n                \"fullyInvestedAt\": null,\n                \"rawLoanAgreementLetterUrl\": null,\n                \"loanAgreementLetterUrl\": null,\n                \"agreementCollectedByEmployeeId\": null,\n                \"disbursedByEmployeeId\": null,\n                \"disbursedAt\": null,\n                \"createdAt\": \"2025-10-06T02:29:00Z\",\n                \"updatedAt\": null\n            },\n            {\n                \"id\": 2,\n                \"userId\": 2,\n                \"amount\": 3000000,\n                \"status\": \"PROPOSED\",\n                \"investedAmount\": 0,\n                \"rate\": 12.5,\n                \"term\": 30,\n                \"photoProofUrl\": null,\n                \"employeeId\": null,\n                \"approvedAt\": null,\n                \"fullyInvestedAt\": null,\n                \"rawLoanAgreementLetterUrl\": null,\n                \"loanAgreementLetterUrl\": null,\n                \"agreementCollectedByEmployeeId\": null,\n                \"disbursedByEmployeeId\": null,\n                \"disbursedAt\": null,\n                \"createdAt\": \"2025-10-06T02:29:43Z\",\n                \"updatedAt\": null\n            }\n        ]\n    }\n}"
+				},
+				{
+					"name": "Success By userId",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/loans?userId=2",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"loans"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 05 Oct 2025 05:55:18 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "646"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"loans\": [\n            {\n                \"id\": 2,\n                \"userId\": 2,\n                \"amount\": 3000000,\n                \"status\": \"PROPOSED\",\n                \"investedAmount\": 0,\n                \"rate\": 12.5,\n                \"term\": 30,\n                \"photoProofUrl\": null,\n                \"employeeId\": null,\n                \"approvedAt\": null,\n                \"fullyInvestedAt\": null,\n                \"rawLoanAgreementLetterUrl\": null,\n                \"loanAgreementLetterUrl\": null,\n                \"agreementCollectedByEmployeeId\": null,\n                \"disbursedByEmployeeId\": null,\n                \"disbursedAt\": null,\n                \"createdAt\": \"2025-10-06T02:29:43Z\",\n                \"updatedAt\": null\n            }\n        ]\n    }\n}"
+				},
+				{
+					"name": "Sucess Get Approved Loans",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/loans?status=APPROVED",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"loans"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "APPROVED"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 05 Oct 2025 05:59:55 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "364"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"loans\": [\n            {\n                \"id\": 1,\n                \"userId\": 1,\n                \"amount\": 1000000,\n                \"status\": \"APPROVED\",\n                \"investedAmount\": 0,\n                \"rate\": 11.5,\n                \"term\": 50,\n                \"photoProofUrl\": \"http://localhost:3000/public/uploads/36e0c367-4311-41e1-8ce6-4003927325a6.png\",\n                \"employeeId\": 1,\n                \"approvedAt\": \"2025-10-06T02:31:40.9244559Z\",\n                \"fullyInvestedAt\": null,\n                \"rawLoanAgreementLetterUrl\": null,\n                \"loanAgreementLetterUrl\": null,\n                \"agreementCollectedByEmployeeId\": null,\n                \"disbursedByEmployeeId\": null,\n                \"disbursedAt\": null,\n                \"createdAt\": \"2025-10-06T02:29:00Z\",\n                \"updatedAt\": \"2025-10-06T09:31:40.9244559+07:00\"\n            }\n        ]\n    }\n}"
 				}
 			]
 		},
 		{
 			"name": "Get Loan",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"userId\": 1,\r\n    \"amount\": 1000000\r\n}"
-				},
 				"url": {
 					"raw": "localhost:3000/loans/1",
 					"host": [
@@ -188,10 +258,6 @@
 					"originalRequest": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"userId\": 1,\r\n    \"amount\": 1000000\r\n}"
-						},
 						"url": {
 							"raw": "localhost:3000/loans/1",
 							"host": [
@@ -226,7 +292,1066 @@
 						}
 					],
 					"cookie": [],
-					"body": "{\n    \"data\": {\n        \"loan\": {\n            \"id\": 1,\n            \"userId\": 1,\n            \"employeeId\": null,\n            \"amount\": 1000000,\n            \"status\": \"PROPOSED\",\n            \"photoProofUrl\": null,\n            \"approvedAt\": null,\n            \"createdAt\": \"2025-10-05T04:05:19Z\",\n            \"updatedAt\": null\n        }\n    }\n}"
+					"body": "{\n    \"data\": {\n        \"loan\": {\n            \"id\": 1,\n            \"userId\": 1,\n            \"amount\": 1000000,\n            \"status\": \"PROPOSED\",\n            \"investedAmount\": 0,\n            \"rate\": 11.5,\n            \"term\": 50,\n            \"photoProofUrl\": null,\n            \"employeeId\": null,\n            \"approvedAt\": null,\n            \"fullyInvestedAt\": null,\n            \"rawLoanAgreementLetterUrl\": null,\n            \"loanAgreementLetterUrl\": null,\n            \"agreementCollectedByEmployeeId\": null,\n            \"disbursedByEmployeeId\": null,\n            \"disbursedAt\": null,\n            \"createdAt\": \"2025-10-06T02:29:00Z\",\n            \"updatedAt\": null\n        }\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "Upload Photo Proof For Approve Loan",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/lenovo/Downloads/8f0c91f9-a3f4-4f32-a9c1-795aaf7418fa-min.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:3000/files",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"files"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Success",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/lenovo/Downloads/8f0c91f9-a3f4-4f32-a9c1-795aaf7418fa-min.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3000/files",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"files"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 05 Oct 2025 15:30:28 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "88"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"file\": {\n            \"url\": \"http://localhost:3000/public/uploads/36e0c367-4311-41e1-8ce6-4003927325a6.png\"\n        }\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "Approve Loan",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"employeeId\": 1,\r\n    \"photoProofUrl\": \"http://localhost:3000/public/uploads/36e0c367-4311-41e1-8ce6-4003927325a6.png\",\r\n    \"status\": \"APPROVED\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/loans/1",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"loans",
+						"1"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Sucess",
+					"originalRequest": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"employeeId\": 1,\r\n    \"photoProofUrl\": \"http://localhost:3000/public/uploads/36e0c367-4311-41e1-8ce6-4003927325a6.png\",\r\n    \"status\": \"APPROVED\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/loans/1",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"loans",
+								"1"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 05 Oct 2025 05:42:42 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "361"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"loan\": {\n            \"id\": 1,\n            \"userId\": 1,\n            \"amount\": 1000000,\n            \"status\": \"APPROVED\",\n            \"investedAmount\": 0,\n            \"rate\": 11.5,\n            \"term\": 50,\n            \"photoProofUrl\": \"http://localhost:3000/public/uploads/36e0c367-4311-41e1-8ce6-4003927325a6.png\",\n            \"employeeId\": 1,\n            \"approvedAt\": \"2025-10-06T02:31:40.9244559Z\",\n            \"fullyInvestedAt\": null,\n            \"rawLoanAgreementLetterUrl\": null,\n            \"loanAgreementLetterUrl\": null,\n            \"agreementCollectedByEmployeeId\": null,\n            \"disbursedByEmployeeId\": null,\n            \"disbursedAt\": null,\n            \"createdAt\": \"2025-10-06T02:29:00Z\",\n            \"updatedAt\": \"2025-10-06T09:31:40.9244559+07:00\"\n        }\n    }\n}"
+				},
+				{
+					"name": "Error Status Not Proposed",
+					"originalRequest": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"employeeId\": 1,\r\n    \"photoProofUrl\": \"http://localhost:3000/public/uploads/36e0c367-4311-41e1-8ce6-4003927325a6.png\",\r\n    \"status\": \"APPROVED\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/loans/1",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"loans",
+								"1"
+							]
+						}
+					},
+					"status": "Internal Server Error",
+					"code": 500,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 06 Oct 2025 02:32:56 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "47"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"only proposed loan can be approved\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Add Investor",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"dtokke1@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/investors",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"investors"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Add Investor",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"dtokke1@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/investors",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"investors"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 05 Oct 2025 16:38:26 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "111"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"investor\": {\n            \"id\": 1,\n            \"email\": \"dtokke1@gmail.com\",\n            \"createdAt\": \"2025-10-05T16:38:26Z\",\n            \"updatedAt\": null\n        }\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "Get Investors",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/investors",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"investors"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Success",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/investors",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"investors"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 05 Oct 2025 16:41:12 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "203"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"investors\": [\n            {\n                \"id\": 1,\n                \"email\": \"dtokke1@gmail.com\",\n                \"createdAt\": \"2025-10-05T16:38:26Z\",\n                \"updatedAt\": null\n            },\n            {\n                \"id\": 2,\n                \"email\": \"dtokke2@gmail.com\",\n                \"createdAt\": \"2025-10-05T16:40:15Z\",\n                \"updatedAt\": null\n            }\n        ]\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "Invest Loan",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"investorId\": 1,\r\n    \"amount\": 300000\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/loans/1/investments",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"loans",
+						"1",
+						"investments"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Sucess",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"investorId\": 1,\r\n    \"amount\": 300000\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/loans/1/investments",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"loans",
+								"1",
+								"investments"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 05 Oct 2025 10:00:46 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "130"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"loan_investment\": {\n            \"id\": 1,\n            \"loanId\": 1,\n            \"investorID\": 1,\n            \"amount\": 300000,\n            \"createdAt\": \"2025-10-06T02:45:58Z\",\n            \"updatedAt\": null\n        }\n    }\n}"
+				},
+				{
+					"name": "Error Exceed Invested",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"investorId\": 1,\r\n    \"amount\": 300000\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/loans/1/investments",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"loans",
+								"1",
+								"investments"
+							]
+						}
+					},
+					"status": "Internal Server Error",
+					"code": 500,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 05 Oct 2025 10:01:06 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "31"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"investment would exceed loan amount\"\n}"
+				},
+				{
+					"name": "Error Full Funded",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"investorId\": 1,\r\n    \"amount\": 300000\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/loans/1/investments",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"loans",
+								"1",
+								"investments"
+							]
+						}
+					},
+					"status": "Internal Server Error",
+					"code": 500,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 05 Oct 2025 10:06:58 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "41"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"loan is already fully funded\"\n}"
+				},
+				{
+					"name": "Error Investor Limit",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"investorId\": 1,\r\n    \"amount\": 300000\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/loans/1/investments",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"loans",
+								"1",
+								"investments"
+							]
+						}
+					},
+					"status": "Internal Server Error",
+					"code": 500,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 05 Oct 2025 13:18:34 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "55"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"investor has already invested in this loan\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Get Loans Investment",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/loans/1/investments",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"loans",
+						"1",
+						"investments"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Sucesss",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/loans/1/investments",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"loans",
+								"1",
+								"investments"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 05 Oct 2025 10:42:34 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "238"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"loan_investments\": [\n            {\n                \"id\": 1,\n                \"loanId\": 1,\n                \"investorID\": 1,\n                \"amount\": 100000,\n                \"createdAt\": \"2025-10-05T10:41:50Z\",\n                \"updatedAt\": null\n            },\n            {\n                \"id\": 2,\n                \"loanId\": 1,\n                \"investorID\": 2,\n                \"amount\": 200000,\n                \"createdAt\": \"2025-10-05T10:41:58Z\",\n                \"updatedAt\": null\n            }\n        ]\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "Get Not Signed Aggrement Letter",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/loans/1/agreement/contents?variant=DRAFT",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"loans",
+						"1",
+						"agreement",
+						"contents"
+					],
+					"query": [
+						{
+							"key": "variant",
+							"value": "DRAFT"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Error Not Fully Funded",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/loans/1/agreement/contents?variant=DRAFT",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"loans",
+								"1",
+								"agreement",
+								"contents"
+							],
+							"query": [
+								{
+									"key": "variant",
+									"value": "DRAFT"
+								}
+							]
+						}
+					},
+					"status": "Internal Server Error",
+					"code": 500,
+					"_postman_previewlanguage": "",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 06 Oct 2025 03:21:40 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "41"
+						}
+					],
+					"cookie": [
+						{
+							"expires": "Invalid Date",
+							"domain": "",
+							"path": ""
+						}
+					],
+					"body": "{\n    \"error\": \"loan is not fully funded yet\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Upload Signed Agreement Letter For Disburse Loan",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/lenovo/Downloads/tiny.pdf"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:3000/files",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"files"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Success",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/lenovo/Downloads/tiny.pdf"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3000/files",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"files"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 05 Oct 2025 15:41:58 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "106"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"file\": {\n            \"url\": \"http://localhost:3000/public/uploads/ba506119-91c5-4bc7-86e6-e92580825323.pdf\"\n        }\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "Disburse Loan",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"loanAgreementLetterUrl\": \"http://localhost:3000/public/uploads/ba506119-91c5-4bc7-86e6-e92580825323.pdf\",\r\n    \"disbursedByEmployeeID\": 1,\r\n    \"agreementCollectedByEmployeeID\": 2,\r\n    \"status\": \"DISBURSED\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/loans/1",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"loans",
+						"1"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Success",
+					"originalRequest": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"loanAgreementLetterUrl\": \"loan aggrement url\",\r\n    \"disbursedByEmployeeID\": 1,\r\n    \"agreementCollectedByEmployeeID\": 2,\r\n    \"status\": \"DISBURSED\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/loans/1",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"loans",
+								"1"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 05 Oct 2025 11:06:57 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "423"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"loan\": {\n            \"id\": 1,\n            \"userId\": 1,\n            \"amount\": 1000000,\n            \"status\": \"DISBURSED\",\n            \"investedAmount\": 1000000,\n            \"rate\": 11.5,\n            \"term\": 50,\n            \"photoProofUrl\": \"http://localhost:3000/public/uploads/36e0c367-4311-41e1-8ce6-4003927325a6.png\",\n            \"employeeId\": 1,\n            \"approvedAt\": \"2025-10-06T02:31:40.9244559Z\",\n            \"fullyInvestedAt\": \"2025-10-06T03:10:13.964987Z\",\n            \"draftLoanAgreementLetterUrl\": \"http://localhost:3000/storage/agreements/297c7f7e-b636-494d-b1ad-0d0c86606b4c.pdf\",\n            \"loanAgreementLetterUrl\": \"http://localhost:3000/public/uploads/ba506119-91c5-4bc7-86e6-e92580825323.pdf\",\n            \"agreementCollectedByEmployeeId\": 2,\n            \"disbursedByEmployeeId\": 1,\n            \"disbursedAt\": \"2025-10-06T03:13:57.4590478Z\",\n            \"createdAt\": \"2025-10-06T02:29:00Z\",\n            \"updatedAt\": \"2025-10-06T10:13:57.4590478+07:00\"\n        }\n    }\n}"
+				},
+				{
+					"name": "Error Loan Not Approved",
+					"originalRequest": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"loanAgreementLetterUrl\": \"loan aggrement url\",\r\n    \"disbursedByEmployeeID\": 1,\r\n    \"agreementCollectedByEmployeeID\": 2,\r\n    \"status\": \"DISBURSED\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/loans/2",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"loans",
+								"2"
+							]
+						}
+					},
+					"status": "Internal Server Error",
+					"code": 500,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 05 Oct 2025 11:07:51 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "48"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"only approved loan can be disbursed\"\n}"
+				},
+				{
+					"name": "Error Not Fully Invested",
+					"originalRequest": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"loanAgreementLetterUrl\": \"loan aggrement url\",\r\n    \"disbursedByEmployeeID\": 1,\r\n    \"agreementCollectedByEmployeeID\": 2,\r\n    \"status\": \"DISBURSED\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/loans/1",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"loans",
+								"1"
+							]
+						}
+					},
+					"status": "Internal Server Error",
+					"code": 500,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 05 Oct 2025 11:09:34 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "52"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"only fully invested loan can be disbursed\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Get Signed Aggrement Letter",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/loans/1/agreement/contents?variant=SIGNED",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"loans",
+						"1",
+						"agreement",
+						"contents"
+					],
+					"query": [
+						{
+							"key": "variant",
+							"value": "SIGNED"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Error Not Dibursed",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/loans/1/agreement/contents?variant=SIGNED",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"loans",
+								"1",
+								"agreement",
+								"contents"
+							],
+							"query": [
+								{
+									"key": "variant",
+									"value": "SIGNED"
+								}
+							]
+						}
+					},
+					"status": "Internal Server Error",
+					"code": 500,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 06 Oct 2025 03:18:16 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "38"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"loan is not disbursed yet\"\n}"
 				}
 			]
 		}
