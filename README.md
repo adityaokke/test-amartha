@@ -10,7 +10,6 @@ Golang service for managing loans, generating agreement letters (PDF), and notif
 - [Running the Application](#running-the-application)
 - [Development](#development)
 - [Testing](#testing)
-- [Contributing](#contributing)
 - [License](#license)
 
 ## Prerequisites
@@ -166,6 +165,3 @@ This project is licensed under the MIT License - see the [LICENSE](https://opens
 Aditya Okke Sugiarso - adityaokke@gmail.com
 
 Project Link: [https://github.com/adityaokke/test-amartha](https://github.com/adityaokke/test-amartha)
-
-
-

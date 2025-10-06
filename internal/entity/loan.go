@@ -127,3 +127,19 @@ type DisburseLoanInput struct {
 	LoanAgreementLetterURL         string
 	AgreementCollectedByEmployeeID int
 }
+
+type LoanQuote struct {
+	BorrowerID      int
+	PrincipalAmount int
+	Rate            float64
+	TotalROI        string
+	AgreementURL    string
+	Investors       []LoanQuoteInvestor
+}
+
+type LoanQuoteInvestor struct {
+	InvestorID int
+	Email      string
+	Amount     int
+	ROI        string
+}

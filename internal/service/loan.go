@@ -14,6 +14,7 @@ import (
 	"github.com/adityaokke/test-amartha/internal/repository/db"
 	"github.com/adityaokke/test-amartha/internal/repository/mail"
 	"github.com/adityaokke/test-amartha/internal/repository/pdf"
+	"github.com/shopspring/decimal"
 	"gorm.io/gorm"
 )
 
@@ -28,6 +29,7 @@ type LoanService interface {
 	Loan(ctx context.Context, filter entity.LoanInput) (result entity.Loan, err error)
 	GetDraftLoanAgreementLetter(ctx context.Context, loanID int) (result string, err error)
 	GetSignedLoanAgreementLetter(ctx context.Context, loanID int) (result string, err error)
+	GetLoanQuote(ctx context.Context, loanID int) (result entity.LoanQuote, err error)
 }
 
 func (s *loanService) ProposeLoan(ctx context.Context, input entity.ProposeLoanInput) (result entity.Loan, err error) {
@@ -414,6 +416,72 @@ func (s *loanService) GetSignedLoanAgreementLetter(ctx context.Context, loanID i
 		return
 	}
 	result = *loan.LoanAgreementLetterURL
+	return
+}
+
+func (s *loanService) GetLoanQuote(ctx context.Context, loanID int) (result entity.LoanQuote, err error) {
+	loan, err := s.loanRepo.Loan(ctx, entity.LoanInput{
+		ID: &loanID,
+	})
+	if err != nil {
+		return
+	}
+	if loan.Status != entity.LoanStatusDisbursed {
+		err = errors.New("loan is not disbursed yet")
+		return
+	}
+
+	var loanInvestments []entity.LoanInvestment
+	loanInvestments, err = s.loanInvestmentRepo.LoanInvestments(ctx, entity.LoanInvestmentsInput{
+		LoanID: &loan.ID,
+	})
+	if err != nil {
+		return
+	}
+	investorIDs := []int{}
+	for _, investment := range loanInvestments {
+		investorIDs = append(investorIDs, investment.InvestorID)
+	}
+	var investors []entity.Investor
+	investors, err = s.investorRepo.Investors(ctx, entity.InvestorsInput{
+		IDs: &investorIDs,
+	})
+	if err != nil {
+		return
+	}
+	investorsMap := make(map[int]entity.Investor)
+	for _, investor := range investors {
+		investorsMap[investor.ID] = investor
+	}
+	principal := decimal.NewFromInt(int64(loan.Amount))
+	rateAnnual := decimal.NewFromFloat(loan.Rate).Div(decimal.NewFromInt(100))
+	termWeeks := decimal.NewFromInt(int64(loan.Term))
+
+	// 1. Weekly Interest = (Principal Amount x Annual Interest Rate) / 52
+	WeeklyInterest := principal.Mul(rateAnnual).Div(decimal.NewFromInt(52))
+	// 2. Total Interest = Weekly Interest x Term (in weeks)
+	TotalInterest := WeeklyInterest.Mul(termWeeks)
+
+	investorsQuote := []entity.LoanQuoteInvestor{}
+	for _, investment := range loanInvestments {
+		// 3. Investor ROI = (Investment Amount / Principal Amount) x Total Interest
+		invAmount := decimal.NewFromInt(int64(investment.Amount))
+		investorsQuote = append(investorsQuote, entity.LoanQuoteInvestor{
+			InvestorID: investment.InvestorID,
+			Email:      investorsMap[investment.InvestorID].Email,
+			Amount:     investment.Amount,
+			ROI:        invAmount.Div(principal).Mul(TotalInterest).StringFixed(0),
+		})
+	}
+	result = entity.LoanQuote{
+		BorrowerID:      loan.UserID,
+		PrincipalAmount: loan.Amount,
+		Rate:            loan.Rate,
+		TotalROI:        TotalInterest.StringFixed(0),
+		AgreementURL:    *loan.LoanAgreementLetterURL,
+		Investors:       investorsQuote,
+	}
+
 	return
 }
 

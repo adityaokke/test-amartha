@@ -26,4 +26,5 @@ func Router(
 	e.POST("/investors", InvestorHandler.AddInvestor)
 	e.GET("/investors", InvestorHandler.GetInvestors)
 	e.GET("/loans/:id/agreement/contents", loanHandler.GetAgreementLetter)
+	e.GET("/loans/:id/quotes", loanHandler.GetLoanQuotes)
 }

@@ -1354,6 +1354,111 @@
 					"body": "{\n    \"error\": \"loan is not disbursed yet\"\n}"
 				}
 			]
+		},
+		{
+			"name": "Get Loans Quotes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/loans/1/quotes",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"loans",
+						"1",
+						"quotes"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Success",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/loans/1/quotes",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"loans",
+								"1",
+								"quotes"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 06 Oct 2025 11:09:18 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "359"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"loan_quotes\": {\n            \"BorrowerID\": 1,\n            \"PrincipalAmount\": 1000000,\n            \"Rate\": 11.5,\n            \"TotalROI\": \"110577\",\n            \"AgreementURL\": \"http://localhost:3000/public/uploads/ba506119-91c5-4bc7-86e6-e92580825323.pdf\",\n            \"Investors\": [\n                {\n                    \"InvestorID\": 1,\n                    \"Email\": \"dtokke1@gmail.com\",\n                    \"Amount\": 300000,\n                    \"ROI\": \"33173\"\n                },\n                {\n                    \"InvestorID\": 2,\n                    \"Email\": \"dtokke2@gmail.com\",\n                    \"Amount\": 700000,\n                    \"ROI\": \"77404\"\n                }\n            ]\n        }\n    }\n}"
+				},
+				{
+					"name": "Error Not Dibursed",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/loans/1/quotes",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"loans",
+								"1",
+								"quotes"
+							]
+						}
+					},
+					"status": "Internal Server Error",
+					"code": 500,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Origin"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 06 Oct 2025 11:11:43 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "38"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"loan is not disbursed yet\"\n}"
+				}
+			]
 		}
 	]
 }

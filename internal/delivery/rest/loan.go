@@ -199,3 +199,23 @@ func (d LoanHandler) GetAgreementLetter(c echo.Context) error {
 
 	return c.Redirect(http.StatusFound, result)
 }
+
+func (d LoanHandler) GetLoanQuotes(c echo.Context) error {
+	id := c.Param("id")
+	parsedID, err := strconv.Atoi(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"error": "Invalid id",
+		})
+	}
+
+	result, err := d.loanService.GetLoanQuote(c.Request().Context(), parsedID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
+	}
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"data": map[string]interface{}{
+			"loan_quotes": result,
+		},
+	})
+}
