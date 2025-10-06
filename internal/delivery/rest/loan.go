@@ -144,12 +144,20 @@ func (d LoanHandler) PatchLoan(c echo.Context) error {
 }
 
 func (d LoanHandler) InvestLoan(c echo.Context) error {
+	id := c.Param("id")
+	parsedID, err := strconv.Atoi(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"error": "Invalid id",
+		})
+	}
 	var form entity.InvestLoanInput
 	if err := c.Bind(&form); err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{
 			"error": "Invalid JSON",
 		})
 	}
+	form.LoanID = parsedID
 	result, err := d.loanService.InvestLoan(c.Request().Context(), form)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
@@ -159,4 +167,35 @@ func (d LoanHandler) InvestLoan(c echo.Context) error {
 			"loan_investment": result,
 		},
 	})
+}
+
+func (d LoanHandler) GetAgreementLetter(c echo.Context) error {
+	id := c.Param("id")
+	parsedID, err := strconv.Atoi(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"error": "Invalid id",
+		})
+	}
+
+	variant := c.QueryParam("variant")
+	result := ""
+	switch variant {
+	case entity.AggrementLetterVariantDraft:
+		result, err = d.loanService.GetDraftLoanAgreementLetter(c.Request().Context(), parsedID)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
+		}
+	case entity.AggrementLetterVariantSign:
+		result, err = d.loanService.GetSignedLoanAgreementLetter(c.Request().Context(), parsedID)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
+		}
+	default:
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"error": "Invalid variant",
+		})
+	}
+
+	return c.Redirect(http.StatusFound, result)
 }

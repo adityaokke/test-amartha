@@ -45,3 +45,13 @@ type InvestLoanInput struct {
 	InvestorID int
 	Amount     int
 }
+
+const (
+	AggrementLetterVariantDraft = "DRAFT"
+	AggrementLetterVariantSign  = "SIGNED"
+)
+
+type GetAgreementLetterInput struct {
+	LoanID int
+	Varian string
+}

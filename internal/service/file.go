@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,7 +15,7 @@ import (
 )
 
 type FileService interface {
-	UploadFile(ctx context.Context, input entity.UploadFileInput) (result string, err error)
+	UploadFile(ctx context.Context, input entity.UploadFileInput) (fileURL string, err error)
 }
 
 func (s *fileService) UploadFile(ctx context.Context, input entity.UploadFileInput) (result string, err error) {
@@ -55,7 +56,12 @@ func (s *fileService) UploadFile(ctx context.Context, input entity.UploadFileInp
 		return "", fmt.Errorf("close: %w", err)
 	}
 
-	return filename, nil
+	u, _ := url.Parse(os.Getenv("APP_HOST"))
+	fileURL, err := url.JoinPath(u.String(), entity.PublicUploadPath, filename)
+	if err != nil {
+		return
+	}
+	return fileURL, nil
 }
 
 type fileService struct {

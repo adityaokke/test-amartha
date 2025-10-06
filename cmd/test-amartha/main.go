@@ -11,6 +11,7 @@ import (
 	"github.com/adityaokke/test-amartha/internal/repository/db/sqlite"
 	"github.com/adityaokke/test-amartha/internal/repository/db/sqlite/migration"
 	"github.com/adityaokke/test-amartha/internal/repository/mail"
+	"github.com/adityaokke/test-amartha/internal/repository/pdf"
 	"github.com/adityaokke/test-amartha/internal/service"
 	driver "github.com/glebarez/sqlite"
 	"github.com/joho/godotenv"
@@ -24,6 +25,7 @@ func main() {
 
 	// ensure dir
 	os.MkdirAll(entity.LocalUploadPath, 0o755)
+	os.MkdirAll(entity.LocalAggrementLetterPath, 0o755)
 
 	db, err := gorm.Open(driver.Open("amartha.db"), &gorm.Config{})
 	if err != nil {
@@ -73,12 +75,15 @@ func main() {
 	mailApi := mail.NewMailApi().
 		SetMailer(&mailer).
 		Build()
+	pdfApi := pdf.NewPdfApi().
+		Build()
 
 	loanService := service.NewLoanService().
 		SetRepository(loanRepo).
 		SetLoanInvestmentRepository(loanInvestmentRepo).
 		SetInvestorRepository(investorRepo).
 		SetMailApi(mailApi).
+		SetPdfApi(pdfApi).
 		Build()
 	loanInvestmentService := service.NewLoanInvestmentService().
 		SetRepository(loanInvestmentRepo).

@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/adityaokke/test-amartha/internal/entity"
@@ -27,19 +26,17 @@ func (d FileHandler) Upload(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "missing file")
 	}
 
-	fileName, err := d.fileService.UploadFile(c.Request().Context(), entity.UploadFileInput{
+	fileURL, err := d.fileService.UploadFile(c.Request().Context(), entity.UploadFileInput{
 		File: file,
 	})
 	if err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
 
-	hostName := c.Request().Host
-	url := fmt.Sprintf("http://%s/%s/%s", hostName, entity.PublicUploadPath, fileName)
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"data": map[string]interface{}{
 			"file": map[string]interface{}{
-				"url": url,
+				"url": fileURL,
 			},
 		},
 	})

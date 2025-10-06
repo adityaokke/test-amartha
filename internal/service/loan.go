@@ -3,6 +3,9 @@ package service
 import (
 	"context"
 	"errors"
+	"net/url"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -10,6 +13,7 @@ import (
 	"github.com/adityaokke/test-amartha/internal/entity"
 	"github.com/adityaokke/test-amartha/internal/repository/db"
 	"github.com/adityaokke/test-amartha/internal/repository/mail"
+	"github.com/adityaokke/test-amartha/internal/repository/pdf"
 	"gorm.io/gorm"
 )
 
@@ -22,17 +26,37 @@ type LoanService interface {
 	Loans(ctx context.Context, filter entity.LoansInput) (result []entity.Loan, err error)
 	CountLoans(ctx context.Context, filter entity.LoansInput) (result int64, err error)
 	Loan(ctx context.Context, filter entity.LoanInput) (result entity.Loan, err error)
+	GetDraftLoanAgreementLetter(ctx context.Context, loanID int) (result string, err error)
+	GetSignedLoanAgreementLetter(ctx context.Context, loanID int) (result string, err error)
 }
 
 func (s *loanService) ProposeLoan(ctx context.Context, input entity.ProposeLoanInput) (result entity.Loan, err error) {
 	if input.UserID == 0 {
-		err = errors.New("user_id is required")
+		err = errors.New("userId is required")
+		return
+	}
+	if input.Amount == 0 {
+		err = errors.New("amount is required")
+		return
+	}
+	if input.Rate == 0 {
+		err = errors.New("rate is required")
+		return
+	}
+	if input.Term == 0 {
+		err = errors.New("term is required")
+		return
+	}
+	if !input.TermUnit.IsValid() {
+		err = errors.New("termUnit is invalid")
 		return
 	}
 	item := entity.Loan{
 		UserID: input.UserID,
 		Amount: input.Amount,
 		Status: entity.LoanStatusProposed,
+		Rate:   input.Rate,
+		Term:   input.Term,
 	}
 	err = s.loanRepo.Create(ctx, &item)
 	if err != nil {
@@ -48,11 +72,11 @@ func (s *loanService) ApproveLoan(ctx context.Context, input entity.ApproveLoanI
 		return
 	}
 	if input.EmployeeID == 0 {
-		err = errors.New("employee_id is required")
+		err = errors.New("employeeId is required")
 		return
 	}
 	if input.PhotoProofURL == "" {
-		err = errors.New("photo_proof_url is required")
+		err = errors.New("photoProofUrl is required")
 		return
 	}
 	currentItem, err := s.loanRepo.Loan(ctx, entity.LoanInput{
@@ -151,41 +175,121 @@ func (s *loanService) InvestLoan(ctx context.Context, input entity.InvestLoanInp
 		return
 	}
 	if loan.InvestedAmount == loan.Amount {
-		var loanInvestments []entity.LoanInvestment
-		loanInvestments, err = s.loanInvestmentRepo.LoanInvestments(ctx, entity.LoanInvestmentsInput{
-			LoanID: &loan.ID,
-		})
+		// update loan fully invested at
+		fullInvestedAt := time.Now().UTC()
+		loan.FullyInvestedAt = &fullInvestedAt
+		err = s.loanRepo.Update(ctx, &loan)
 		if err != nil {
 			return
 		}
-		investorIDs := make([]int, 0)
-		investmentsMap := make(map[int]entity.LoanInvestment)
-		for _, investment := range loanInvestments {
-			investorIDs = append(investorIDs, investment.InvestorID)
-			investmentsMap[investment.InvestorID] = investment
-		}
-		var investors []entity.Investor
-		investors, err = s.investorRepo.Investors(ctx, entity.InvestorsInput{
-			IDs: &investorIDs,
-		})
-		if err != nil {
-			return
-		}
-		for _, investor := range investors {
-			investment := investmentsMap[investor.ID]
-			err = s.mailApi.SendInvestorAgreementMail(ctx, entity.SendInvestorAgreementMailInput{
-				To:           investor.Email,
-				InvestorName: investor.Email,
-				InvestDate:   investment.CreatedAt.Format("02 Jan 2006"),
-				Amount:       strconv.Itoa(investment.Amount),
-				AgreementURL: *loan.LoanAgreementLetterURL,
-			})
+		go func() {
+			// generate loan agreement pdf
+			var pdfRelativePath string
+			pdfRelativePath, err = s.generateLoanAgreementPDF(ctx, loan)
 			if err != nil {
 				return
 			}
-		}
+			u, _ := url.Parse(os.Getenv("APP_HOST"))
+			draftLoanAgreementLetterURL, err := url.JoinPath(u.String(), filepath.ToSlash(pdfRelativePath))
+			if err != nil {
+				return
+			}
+			loan.DraftLoanAgreementLetterURL = &draftLoanAgreementLetterURL
+			err = s.loanRepo.Update(ctx, &loan)
+			if err != nil {
+				return
+			}
+			// send email to investors
+			err = s.sendLoanAgreementEmail(ctx, loan)
+			if err != nil {
+				return
+			}
+		}()
 	}
 	result = item
+	return
+}
+
+func (s *loanService) generateLoanAgreementPDF(ctx context.Context, loan entity.Loan) (pdfRelativePath string, err error) {
+	var loanInvestments []entity.LoanInvestment
+	loanInvestments, err = s.loanInvestmentRepo.LoanInvestments(ctx, entity.LoanInvestmentsInput{
+		LoanID: &loan.ID,
+	})
+	if err != nil {
+		return
+	}
+	investorIDs := make([]int, 0)
+	investmentsMap := make(map[int]entity.LoanInvestment)
+	for _, investment := range loanInvestments {
+		investorIDs = append(investorIDs, investment.InvestorID)
+		investmentsMap[investment.InvestorID] = investment
+	}
+	var investors []entity.Investor
+	investors, err = s.investorRepo.Investors(ctx, entity.InvestorsInput{
+		IDs: &investorIDs,
+	})
+	if err != nil {
+		return
+	}
+
+	investorsPdf := []entity.InvestorAgreementLetterInvestor{}
+	for _, investor := range investors {
+		investment := investmentsMap[investor.ID]
+		investorsPdf = append(investorsPdf, entity.InvestorAgreementLetterInvestor{
+			Name:    investor.Email,
+			Amount:  strconv.Itoa(investment.Amount),
+			Percent: (float64(investment.Amount) / float64(loan.Amount)) * 100,
+		})
+	}
+	pdfRelativePath, err = s.pdfApi.GenerateAgreementPDF(entity.InvestorAgreementLetterInput{
+		AgreementNo:  strconv.Itoa(loan.ID),
+		EffectiveOn:  loan.FullyInvestedAt.Format("02 Jan 2006"),
+		BorrowerName: strconv.Itoa(loan.UserID),
+		Amount:       strconv.Itoa(loan.Amount),
+		Rate:         strconv.FormatFloat(loan.Rate, 'f', 2, 64),
+		Term:         strconv.Itoa(loan.Term),
+		Investors:    investorsPdf,
+	})
+	if err != nil {
+		return
+	}
+	return
+}
+
+func (s *loanService) sendLoanAgreementEmail(ctx context.Context, loan entity.Loan) (err error) {
+	var loanInvestments []entity.LoanInvestment
+	loanInvestments, err = s.loanInvestmentRepo.LoanInvestments(ctx, entity.LoanInvestmentsInput{
+		LoanID: &loan.ID,
+	})
+	if err != nil {
+		return
+	}
+	investorIDs := make([]int, 0)
+	investmentsMap := make(map[int]entity.LoanInvestment)
+	for _, investment := range loanInvestments {
+		investorIDs = append(investorIDs, investment.InvestorID)
+		investmentsMap[investment.InvestorID] = investment
+	}
+	var investors []entity.Investor
+	investors, err = s.investorRepo.Investors(ctx, entity.InvestorsInput{
+		IDs: &investorIDs,
+	})
+	if err != nil {
+		return
+	}
+	for _, investor := range investors {
+		investment := investmentsMap[investor.ID]
+		err = s.mailApi.SendInvestorAgreementMail(ctx, entity.SendInvestorAgreementMailInput{
+			To:           investor.Email,
+			InvestorName: investor.Email,
+			InvestDate:   investment.CreatedAt.Format("02 Jan 2006"),
+			Amount:       strconv.Itoa(investment.Amount),
+			AgreementURL: *loan.DraftLoanAgreementLetterURL,
+		})
+		if err != nil {
+			return
+		}
+	}
 	return
 }
 
@@ -275,11 +379,50 @@ func (s *loanService) Loan(ctx context.Context, filter entity.LoanInput) (result
 	return
 }
 
+func (s *loanService) GetDraftLoanAgreementLetter(ctx context.Context, loanID int) (result string, err error) {
+	loan, err := s.loanRepo.Loan(ctx, entity.LoanInput{
+		ID: &loanID,
+	})
+	if err != nil {
+		return
+	}
+	if loan.FullyInvestedAt == nil {
+		err = errors.New("loan is not fully funded yet")
+		return
+	}
+	if loan.DraftLoanAgreementLetterURL == nil {
+		err = errors.New("loan agreement letter is not available")
+		return
+	}
+	result = *loan.DraftLoanAgreementLetterURL
+	return
+}
+
+func (s *loanService) GetSignedLoanAgreementLetter(ctx context.Context, loanID int) (result string, err error) {
+	loan, err := s.loanRepo.Loan(ctx, entity.LoanInput{
+		ID: &loanID,
+	})
+	if err != nil {
+		return
+	}
+	if loan.Status != entity.LoanStatusDisbursed {
+		err = errors.New("loan is not disbursed yet")
+		return
+	}
+	if loan.LoanAgreementLetterURL == nil {
+		err = errors.New("loan agreement letter is not available")
+		return
+	}
+	result = *loan.LoanAgreementLetterURL
+	return
+}
+
 type loanService struct {
 	loanRepo           db.LoanRepository
 	loanInvestmentRepo db.LoanInvestmentRepository
 	investorRepo       db.InvestorRepository
 	mailApi            mail.MailApi
+	pdfApi             pdf.PdfApi
 }
 
 type InitiatorLoan func(s *loanService) *loanService
@@ -314,6 +457,13 @@ func (i InitiatorLoan) SetInvestorRepository(investorRepository db.InvestorRepos
 func (i InitiatorLoan) SetMailApi(mailApi mail.MailApi) InitiatorLoan {
 	return func(s *loanService) *loanService {
 		i(s).mailApi = mailApi
+		return s
+	}
+}
+
+func (i InitiatorLoan) SetPdfApi(pdfApi pdf.PdfApi) InitiatorLoan {
+	return func(s *loanService) *loanService {
+		i(s).pdfApi = pdfApi
 		return s
 	}
 }

@@ -29,10 +29,14 @@ type Loan struct {
 	Amount         int        `json:"amount" gorm:"type:INTEGER;"`
 	Status         LoanStatus `json:"status" gorm:"type:VARCHAR(50);"`
 	InvestedAmount int        `json:"investedAmount" gorm:"type:INTEGER;default:0;"`
+	Rate           float64    `json:"rate" gorm:"type:FLOAT;default:0;"`
+	Term           int        `json:"term" gorm:"type:INTEGER;default:0;"`
 	// approval info
-	PhotoProofURL        *string    `json:"photoProofUrl" gorm:"type:TEXT;"`
-	ApprovedByEmployeeID *int       `json:"employeeId" gorm:"index;"`
-	ApprovedAt           *time.Time `json:"approvedAt" gorm:"type:DATETIME;"`
+	PhotoProofURL               *string    `json:"photoProofUrl" gorm:"type:TEXT;"`
+	ApprovedByEmployeeID        *int       `json:"employeeId" gorm:"index;"`
+	ApprovedAt                  *time.Time `json:"approvedAt" gorm:"type:DATETIME;"`
+	FullyInvestedAt             *time.Time `json:"fullyInvestedAt" gorm:"type:DATETIME;"`
+	DraftLoanAgreementLetterURL *string    `json:"draftLoanAgreementLetterUrl" gorm:"type:TEXT;"`
 	// disbursement info
 	LoanAgreementLetterURL         *string    `json:"loanAgreementLetterUrl" gorm:"type:TEXT;"`
 	AgreementCollectedByEmployeeID *int       `json:"agreementCollectedByEmployeeId" gorm:"index;"`
@@ -77,9 +81,26 @@ func (w *WhereLoan) Scan(input any) {
 	}
 }
 
+type TermUnit string
+
+const (
+	TermUnitWeek TermUnit = "WEEKLY"
+)
+
+func (e TermUnit) IsValid() bool {
+	switch e {
+	case TermUnitWeek:
+		return true
+	}
+	return false
+}
+
 type ProposeLoanInput struct {
-	UserID int
-	Amount int
+	UserID   int
+	Amount   int
+	Rate     float64
+	Term     int
+	TermUnit TermUnit
 }
 
 type PatchLoanInput struct {
