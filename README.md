@@ -3,7 +3,7 @@
 Golang service for managing loans, generating agreement letters (PDF), and notifying investors when a loan is fully funded.
 
 ## Table of Contents
-
+- [Architecture & Diagrams](#architecture--diagrams)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Project Structure](#project-structure)
@@ -11,6 +11,16 @@ Golang service for managing loans, generating agreement letters (PDF), and notif
 - [Development](#development)
 - [Testing](#testing)
 - [License](#license)
+
+## Architecture & Diagrams
+- **Loan State Machine**: status lifecycle.  
+  ![Loan State Machine](docs/status-flow.png)
+
+- **Service Flowchart**: high-level request flow, async processing.  
+  ![Service Flowchart](docs/flowchart.png)
+
+- **Database Schema**: tables, relations.  
+  ![Database Schema](docs/database-diagram.png)
 
 ## Prerequisites
 
